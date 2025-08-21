@@ -8,8 +8,8 @@ const Chat = () => {
   const chatEndRef = useRef(null);
 
   useEffect(() => {
-    // Fetch chat history on mount
-    fetch('http://localhost:5000/history')
+    // ✅ Use relative path (works both locally with proxy and in Render)
+    fetch('/history')
       .then(res => res.json())
       .then(data => setChat(data))
       .catch(() => setChat([]));
@@ -26,7 +26,8 @@ const Chat = () => {
     const userMsg = { question, answer: null };
     setChat(prev => [...prev, userMsg]);
     try {
-      const res = await fetch('http://localhost:5000/ask', {
+      // ✅ Relative path here as well
+      const res = await fetch('/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question }),
@@ -57,7 +58,10 @@ const Chat = () => {
       fontFamily: 'Segoe UI, Arial, sans-serif',
       minHeight: 400,
     }}>
-      <h2 style={{ fontWeight: 800, marginBottom: 24, color: '#1976d2', letterSpacing: 1 }}>Ask Questions About Your PDF</h2>
+      <h2 style={{ fontWeight: 800, marginBottom: 24, color: '#1976d2', letterSpacing: 1 }}>
+        Ask Questions About Your PDF
+      </h2>
+
       <div style={{
         border: '1.5px solid #90caf9',
         borderRadius: 12,
@@ -72,10 +76,7 @@ const Chat = () => {
         {chat.length === 0 && <div style={{ color: '#90caf9', fontWeight: 500 }}>No conversation yet.</div>}
         {chat.map((msg, idx) => (
           <div key={idx} style={{ marginBottom: 18 }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-            }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               <div style={{
                 background: 'linear-gradient(90deg, #1976d2 0%, #64b5f6 100%)',
                 color: '#fff',
@@ -90,11 +91,7 @@ const Chat = () => {
               </div>
             </div>
             {msg.answer && (
-              <div style={{
-                display: 'flex',
-                justifyContent: 'flex-start',
-                marginTop: 6,
-              }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 6 }}>
                 <div style={{
                   background: '#fff',
                   color: '#1976d2',
@@ -114,6 +111,7 @@ const Chat = () => {
         ))}
         <div ref={chatEndRef} />
       </div>
+
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <input
           type="text"
@@ -148,19 +146,14 @@ const Chat = () => {
             boxShadow: '0 2px 8px rgba(25, 118, 210, 0.10)',
             transition: 'background 0.2s',
           }}
-          onMouseOver={e => {
-            if (!loading && question.trim()) e.target.style.background = 'linear-gradient(90deg, #1565c0 0%, #42a5f5 100%)';
-          }}
-          onMouseOut={e => {
-            if (!loading && question.trim()) e.target.style.background = 'linear-gradient(90deg, #1976d2 0%, #64b5f6 100%)';
-          }}
         >
           {loading ? 'Asking...' : 'Ask'}
         </button>
       </div>
+
       {error && <div style={{ color: '#d32f2f', marginTop: 14, fontWeight: 600 }}>{error}</div>}
     </div>
   );
 };
 
-export default Chat; 
+export default Chat;
