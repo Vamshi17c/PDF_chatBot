@@ -1,159 +1,79 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 
-const Chat = () => {
-  const [question, setQuestion] = useState('');
-  const [chat, setChat] = useState([]);
-  const [loading, setLoading] = useState(false);
+const Upload = () => {
+  const [file, setFile] = useState(null);
   const [error, setError] = useState('');
-  const chatEndRef = useRef(null);
+  const [success, setSuccess] = useState('');
 
-  useEffect(() => {
-    // ✅ Use relative path (works both locally with proxy and in Render)
-    fetch('/history')
-      .then(res => res.json())
-      .then(data => setChat(data))
-      .catch(() => setChat([]));
-  }, []);
-
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chat]);
-
-  const handleSend = async () => {
-    if (!question.trim()) return;
-    setLoading(true);
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
     setError('');
-    const userMsg = { question, answer: null };
-    setChat(prev => [...prev, userMsg]);
-    try {
-      // ✅ Relative path here as well
-      const res = await fetch('/ask', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question }),
-      });
-      if (!res.ok) throw new Error('Failed to get answer');
-      const data = await res.json();
-      setChat(prev => prev.map((msg, i) => i === prev.length - 1 ? { ...msg, answer: data.answer } : msg));
-      setQuestion('');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    setSuccess('');
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') handleSend();
+  const handleUpload = async () => {
+    if (!file) {
+      setError('Please select a PDF file.');
+      return;
+    }
+    const formData = new FormData();
+    formData.append('pdf', file);
+
+    try {
+      const res = await fetch('/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error('Upload failed');
+      setSuccess('✅ PDF uploaded successfully!');
+      setError('');
+    } catch (err) {
+      setError(err.message);
+      setSuccess('');
+    }
   };
 
   return (
     <div style={{
-      maxWidth: 800,
+      maxWidth: 600,
       margin: '40px auto',
       padding: 32,
       borderRadius: 18,
-      boxShadow: '0 8px 32px rgba(249, 6, 6, 0.1)',
-      background: 'linear-gradient(135deg, #f8fbff 0%, #e3f0ff 100%)',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+      background: 'linear-gradient(135deg, #f0fff4 0%, #e6ffe6 100%)',
       fontFamily: 'Segoe UI, Arial, sans-serif',
-      minHeight: 400,
     }}>
-      <h2 style={{ fontWeight: 800, marginBottom: 24, color: '#1976d2', letterSpacing: 1 }}>
-        Ask Questions About Your PDF
+      <h2 style={{ fontWeight: 800, marginBottom: 24, color: '#2e7d32' }}>
+        Upload Your PDF
       </h2>
 
-      <div style={{
-        border: '1.5px solid #90caf9',
-        borderRadius: 12,
-        padding: 20,
-        minHeight: 220,
-        background: '#f4f8fb',
-        marginBottom: 20,
-        maxHeight: 340,
-        overflowY: 'auto',
-        boxShadow: '0 2px 8px rgba(25, 118, 210, 0.04)',
-      }}>
-        {chat.length === 0 && <div style={{ color: '#90caf9', fontWeight: 500 }}>No conversation yet.</div>}
-        {chat.map((msg, idx) => (
-          <div key={idx} style={{ marginBottom: 18 }}>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <div style={{
-                background: 'linear-gradient(90deg, #1976d2 0%, #64b5f6 100%)',
-                color: '#fff',
-                borderRadius: '18px 18px 4px 18px',
-                padding: '10px 18px',
-                maxWidth: '75%',
-                fontWeight: 500,
-                fontSize: 15,
-                boxShadow: '0 2px 8px rgba(25, 118, 210, 0.08)',
-              }}>
-                {msg.question}
-              </div>
-            </div>
-            {msg.answer && (
-              <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 6 }}>
-                <div style={{
-                  background: '#fff',
-                  color: '#1976d2',
-                  borderRadius: '18px 18px 18px 4px',
-                  padding: '10px 18px',
-                  maxWidth: '75%',
-                  fontWeight: 500,
-                  fontSize: 15,
-                  boxShadow: '0 2px 8px rgba(25, 118, 210, 0.08)',
-                  border: '1px solid #e3f0ff',
-                }}>
-                  {msg.answer}
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-        <div ref={chatEndRef} />
-      </div>
+      <input
+        type="file"
+        accept="application/pdf"
+        onChange={handleFileChange}
+        style={{ marginBottom: 16 }}
+      />
 
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <input
-          type="text"
-          value={question}
-          onChange={e => setQuestion(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type your question..."
-          style={{
-            width: '80%',
-            padding: '12px 14px',
-            borderRadius: 8,
-            border: '1.5px solid #90caf9',
-            fontSize: 15,
-            marginRight: 10,
-            outline: 'none',
-            transition: 'border 0.2s',
-          }}
-          disabled={loading}
-        />
-        <button
-          onClick={handleSend}
-          disabled={loading || !question.trim()}
-          style={{
-            padding: '12px 24px',
-            borderRadius: 8,
-            border: 'none',
-            background: loading || !question.trim() ? '#b3c6e6' : 'linear-gradient(90deg, #1976d2 0%, #64b5f6 100%)',
-            color: '#fff',
-            fontWeight: 700,
-            fontSize: 15,
-            cursor: loading || !question.trim() ? 'not-allowed' : 'pointer',
-            boxShadow: '0 2px 8px rgba(25, 118, 210, 0.10)',
-            transition: 'background 0.2s',
-          }}
-        >
-          {loading ? 'Asking...' : 'Ask'}
-        </button>
-      </div>
+      <button
+        onClick={handleUpload}
+        style={{
+          padding: '12px 24px',
+          borderRadius: 8,
+          border: 'none',
+          background: 'linear-gradient(90deg, #2e7d32 0%, #66bb6a 100%)',
+          color: '#fff',
+          fontWeight: 700,
+          cursor: 'pointer',
+        }}
+      >
+        Upload
+      </button>
 
-      {error && <div style={{ color: '#d32f2f', marginTop: 14, fontWeight: 600 }}>{error}</div>}
+      {error && <div style={{ color: 'red', marginTop: 12 }}>{error}</div>}
+      {success && <div style={{ color: 'green', marginTop: 12 }}>{success}</div>}
     </div>
   );
 };
 
-export default Chat;
+export default Upload;
