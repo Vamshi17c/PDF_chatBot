@@ -17,7 +17,7 @@ const Upload = () => {
       return;
     }
     const formData = new FormData();
-    formData.append('pdf', file);
+    formData.append('file', file); // ✅ must match backend field name
 
     try {
       const res = await fetch('/upload', {
