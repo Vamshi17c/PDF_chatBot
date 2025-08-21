@@ -5,41 +5,27 @@ import './App.css';
 
 function App() {
   return (
-    <div style={{
-      fontFamily: 'Segoe UI, Arial, sans-serif',
-      padding: 20,
-    }}>
-      {/* Header */}
+    <div>
       <div style={{
-        textAlign: 'center',
-        marginBottom: 40,
+        padding: 12,
+        marginLeft: 550,
+        fontFamily: 'Segoe UI, Arial, sans-serif',
       }}>
         <h1 style={{
           fontSize: 36,
           fontWeight: 800,
           color: '#222',
           letterSpacing: 1,
-        }}>
-          PDF Q&A Chatbot
-        </h1>
-        <p style={{ color: '#555', marginTop: 8 }}>
-          Upload a PDF and then ask questions about it
-        </p>
+          marginBottom: 40,
+          textAlign: 'left',
+        }}>PDF Q&A Chatbot</h1>
       </div>
 
       {/* Upload Section */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        marginBottom: 40,
-      }}>
-        <Upload />
-      </div>
+      <Upload />
 
       {/* Chat Section */}
-      <div>
-        <Chat />
-      </div>
+      <Chat />
     </div>
   );
 }
