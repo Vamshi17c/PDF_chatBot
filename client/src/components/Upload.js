@@ -22,7 +22,7 @@ const Upload = ({ onUploadSuccess }) => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      const res = await fetch('http://localhost:5000/upload', {
+      const res = await fetch('/upload', {   // ✅ relative path
         method: 'POST',
         body: formData,
       });
@@ -62,7 +62,6 @@ const Upload = ({ onUploadSuccess }) => {
     inputRef.current.click();
   };
 
-  // Set page background color
   React.useEffect(() => {
     document.body.style.background = 'linear-gradient(0deg,rgb(18, 19, 18) 55%, #64b5f6 100%)';
     return () => { document.body.style.background = ''; };
@@ -148,4 +147,4 @@ const Upload = ({ onUploadSuccess }) => {
   );
 };
 
-export default Upload; 
+export default Upload;
