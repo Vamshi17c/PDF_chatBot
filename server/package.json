@@ -1,16 +1,16 @@
 {
-  "name": "server",
+  "name": "pdf-chatbot-server",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "PDF Chatbot backend",
+  "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "cd ../client && npm install && npm run build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
     "@langchain/core": "^0.3.66",
     "@langchain/google-genai": "^0.2.15",
@@ -23,4 +23,3 @@
     "pdf-parse": "^1.1.1"
   }
 }
-
