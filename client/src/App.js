@@ -4,26 +4,43 @@ import Chat from './components/Chat';
 import './App.css';
 
 function App() {
-  // Optionally, you can use state to trigger refresh in Chat after upload
-  // For now, just render both components
-  return (<div>
+  return (
     <div style={{
-      padding: 12,
-      marginLeft: 550,
       fontFamily: 'Segoe UI, Arial, sans-serif',
+      padding: 20,
     }}>
-      <h1 style={{
-        fontSize: 36,
-        fontWeight: 800,
-        color: '#222',
-        letterSpacing: 1,
+      {/* Header */}
+      <div style={{
+        textAlign: 'center',
         marginBottom: 40,
-        textAlign: 'left',
-      }}>PDF Q&A Chatbot</h1></div>
+      }}>
+        <h1 style={{
+          fontSize: 36,
+          fontWeight: 800,
+          color: '#222',
+          letterSpacing: 1,
+        }}>
+          PDF Q&A Chatbot
+        </h1>
+        <p style={{ color: '#555', marginTop: 8 }}>
+          Upload a PDF and then ask questions about it
+        </p>
+      </div>
+
+      {/* Upload Section */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        marginBottom: 40,
+      }}>
+        <Upload />
+      </div>
+
+      {/* Chat Section */}
       <div>
-      <Upload />
-      <Chat />
-    </div></div>
+        <Chat />
+      </div>
+    </div>
   );
 }
 
